@@ -1,31 +1,10 @@
-# AgriGraud UI Enhancement TODO
+# Task: Remove Weather Page, Add Pesticide Page
 
-## Phase 1: CSS Foundation
-- [ ] Update App.css with modern design system (gradients, shadows, transitions)
-- [ ] Add responsive breakpoints
-- [ ] Add CSS variables for colors
+## TODO List:
+- [ ] Update Navbar.js - remove weather, add pesticide link
+- [ ] Update App.js - remove weather route, add pesticide route
+- [ ] Update languages.js - add pesticide translations
+- [ ] Create PesticidePage.js with 20 pesticides
+- [ ] Update App.css with pesticide card styles
 
-## Phase 2: Navbar Enhancement
-- [ ] Add sticky behavior
-- [ ] Add mobile hamburger menu
-- [ ] Add hover animations on nav items
-
-## Phase 3: Hero Section Enhancement
-- [ ] Add gradient background
-- [ ] Add CTA buttons with animations
-- [ ] Improve typography
-
-## Phase 4: Weather Card Enhancement
-- [ ] Add weather icons
-- [ ] Add more weather details
-- [ ] Add refresh button
-
-## Phase 5: Features Enhancement
-- [ ] Add hover scale effects
-- [ ] Add icons to feature cards
-- [ ] Improve card styling
-
-## Phase 6: New Interactive Components
-- [ ] Add CropRecommendation form component
-- [ ] Add MarketSearch component
-- [ ] Integrate into Home page
+## Progress:

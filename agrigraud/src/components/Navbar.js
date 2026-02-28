@@ -24,7 +24,7 @@ export default function Navbar({ setLang, content }) {
     { name: content.navbar.home, path: "/" },
     { name: content.navbar.marketplace, path: "/marketplace" },
     { name: content.navbar.recommendations, path: "/recommendations" },
-    { name: content.navbar.weather, path: "/weather" },
+    { name: content.navbar.pesticide, path: "/pesticide" },
   ];
 
   return (

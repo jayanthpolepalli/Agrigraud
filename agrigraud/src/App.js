@@ -8,16 +8,9 @@ import Signup from "./pages/Signup";
 import CropPredictor from "./components/CropPredictor";
 import CropRecommendations from "./pages/CropRecommendations";
 import Marketplace from "./pages/Marketplace";
+import PesticidePage from "./pages/PesticidePage";
 import languages from "./data/languages";
 import "./App.css";
-
-// Placeholder component for Weather route
-const Weather = ({ content }) => (
-  <div className="page-container">
-    <h1>{content.weather.title}</h1>
-    <p>{content.weather.comingSoon}</p>
-  </div>
-);
 
 export default function App() {
   const [lang, setLang] = useState("en");
@@ -32,7 +25,7 @@ export default function App() {
         <Route path="/signup" element={<Signup content={content} />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/recommendations" element={<CropPredictor content={content} />} />
-        <Route path="/weather" element={<Weather content={content} />} />
+        <Route path="/pesticide" element={<PesticidePage content={content} />} />
       </Routes>
     </Router>
   );
