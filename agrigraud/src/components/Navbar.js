@@ -29,7 +29,7 @@ export default function Navbar({ setLang, content }) {
 
   return (
     <nav className={`navbar ${isScrolled ? "scrolled" : ""}`}>
-      <Link to="/" className="logo">AgriGraud</Link>
+      <Link to="/" className="logo">AgriSmart</Link>
 
       <ul className={`nav-links ${isMobileMenuOpen ? "active" : ""}`}>
         {navItems.map((item) => (

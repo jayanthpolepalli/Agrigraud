@@ -233,7 +233,7 @@ const languages = {
       home: "హోమ్",
       marketplace: "మార్కెట్‌ప్‌లేస్",
       recommendations: "సిఫార్సులు",
-      weather: " వాతావరణం",
+      pesticide: "శక్కాజీ",
       login: "లాగిన్",
       signUp: "Sign Up",
     },
