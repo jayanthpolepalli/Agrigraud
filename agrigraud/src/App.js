@@ -23,7 +23,7 @@ export default function App() {
         <Route path="/" element={<Home content={content} />} />
         <Route path="/login" element={<Login content={content} />} />
         <Route path="/signup" element={<Signup content={content} />} />
-        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/marketplace" element={<Marketplace content={content} />} />
         <Route path="/recommendations" element={<CropPredictor content={content} />} />
         <Route path="/pesticide" element={<PesticidePage content={content} />} />
       </Routes>

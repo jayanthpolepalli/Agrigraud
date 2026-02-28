@@ -43,18 +43,11 @@ export default function Navbar({ setLang, content }) {
           </motion.li>
         ))}
         <motion.li
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className={location.pathname === "/login" ? "active" : ""}
-        >
-          <Link to="/login" className="nav-link">{content.navbar.login}</Link>
-        </motion.li>
-        <motion.li
           className="btn"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Link to="/signup" className="nav-link btn-link">{content.navbar.signUp}</Link>
+          <Link to="/login" className="nav-link btn-link">{content.navbar.login}</Link>
         </motion.li>
       </ul>
 
