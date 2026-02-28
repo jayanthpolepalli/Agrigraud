@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation Portal</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-hover: #1b5e20;
+            --bg: #f4f7f6;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 800px; }
+        
+        h2 { color: var(--primary); text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        
+        /* Grid Layout for Inputs */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        
+        .form-group { display: flex; flex-direction: column; }
+        label { font-size: 0.9rem; font-weight: 600; color: #555; margin-bottom: 5px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 5px rgba(46, 125, 50, 0.2); }
+
+        .full-width { grid-column: 1 / -1; }
+        
+        button { 
+            grid-column: 1 / -1; background: var(--primary); color: white; padding: 15px; 
+            border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; 
+            cursor: pointer; transition: background 0.3s; margin-top: 10px;
+        }
+        button:hover { background: var(--primary-hover); }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* Results Styling */
+        #results { margin-top: 30px; display: none; }
+        .crop-card { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid var(--primary);
+            background: #f9f9f9; animation: fadeIn 0.5s ease forwards;
+        }
+        .crop-name { font-size: 1.2rem; font-weight: bold; text-transform: uppercase; color: #333; }
+        .confidence { color: var(--primary); font-weight: bold; font-size: 1.1rem; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Crop Prediction System</h2>
+    
+    <form id="prediction-form">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nitrogen (N)</label>
+                <input type="number" id="n" step="any" placeholder="90" required>
+            </div>
+            <div class="form-group">
+                <label>Phosphorus (P)</label>
+                <input type="number" id="p" step="any" placeholder="42" required>
+            </div>
+            <div class="form-group">
+                <label>Potassium (K)</label>
+                <input type="number" id="k" step="any" placeholder="43" required>
+            </div>
+            <div class="form-group">
+                <label>pH Level</label>
+                <input type="number" id="ph" step="0.1" placeholder="6.5" required>
+            </div>
+
+            <div class="form-group">
+                <label>Past Temp (°C)</label>
+                <input type="number" id="past_temp" step="any" required>
+            </div>
+            <div class="form-group">
+                <label>Future Temp (°C)</label>
+                <input type="number" id="future_temp" step="any" required>
+            </div>
+            <div class="form-group">
+                <label>Past Rainfall (mm)</label>
+                <input type="number" id="past_rain" step="any" required>
+            </div>
+            <div class="form-group">
+                <label>Humidity (%)</label>
+                <input type="number" id="hum" step="any" required>
+            </div>
+
+            <div class="form-group">
+                <label>Future Prob</label>
+                <input type="number" id="future_prob" step="0.01" placeholder="0.8" required>
+            </div>
+            <div class="form-group">
+                <label>Soil Moisture 1</label>
+                <input type="number" id="sm1" step="any" required>
+            </div>
+            <div class="form-group">
+                <label>Soil Moisture 2</label>
+                <input type="number" id="sm2" step="any" required>
+            </div>
+            <div class="form-group">
+                <label>Soil Moisture 3</label>
+                <input type="number" id="sm3" step="any" required>
+            </div>
+
+            <div class="form-group">
+                <label>Soil Type</label>
+                <select id="soil_type" required>
+                    <option value="Loamy soil">Loamy Soil</option>
+                    <option value="Clayey soil">Clayey Soil</option>
+                    <option value="Sandy soil">Sandy Soil</option>
+                    <option value="Black soil">Black Soil</option>
+                    </select>
+            </div>
+            <div class="form-group">
+                <label>Water Sources (Comma separated)</label>
+                <input type="text" id="water_sources" placeholder="bore, rainfall" required>
+            </div>
+
+            <button type="submit" id="btn-submit">Analyze & Predict Crops</button>
+        </div>
+    </form>
+
+    <div id="results">
+        <h3 style="color: #444;">Top Recommended Crops:</h3>
+        <div id="crop-list"></div>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('prediction-form');
+    const btn = document.getElementById('btn-submit');
+    const resultsDiv = document.getElementById('results');
+    const cropList = document.getElementById('crop-list');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Disable UI
+        btn.disabled = true;
+        btn.innerText = "Processing Model...";
+        resultsDiv.style.display = "none";
+
+        // Build JSON Payload
+        const payload = {
+            n: parseFloat(document.getElementById('n').value),
+            p: parseFloat(document.getElementById('p').value),
+            k: parseFloat(document.getElementById('k').value),
+            ph: parseFloat(document.getElementById('ph').value),
+            soil_type: document.getElementById('soil_type').value,
+            past_temp: parseFloat(document.getElementById('past_temp').value),
+            future_temp: parseFloat(document.getElementById('future_temp').value),
+            past_rain: parseFloat(document.getElementById('past_rain').value),
+            hum: parseFloat(document.getElementById('hum').value),
+            future_prob: parseFloat(document.getElementById('future_prob').value),
+            sm1: parseFloat(document.getElementById('sm1').value),
+            sm2: parseFloat(document.getElementById('sm2').value),
+            sm3: parseFloat(document.getElementById('sm3').value),
+            water_sources: document.getElementById('water_sources').value.split(',').map(s => s.trim())
+        };
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error("Server error. Check input formats.");
+
+            const data = await response.json();
+
+            // Render Results
+            cropList.innerHTML = '';
+            data.top_crops.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'crop-card';
+                card.innerHTML = `
+                    <span class="crop-name">#${index+1} ${item.crop}</span>
+                    <span class="confidence">${item.confidence}% Match</span>
+                `;
+                cropList.appendChild(card);
+            });
+
+            resultsDiv.style.display = "block";
+
+        } catch (error) {
+            alert("Error: " + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Analyze & Predict Crops";
+        }
+    });
+</script>
+
+</body>
+</html>

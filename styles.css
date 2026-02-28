@@ -1,0 +1,260 @@
+/* Variables & Theme */
+:root {
+    --saffron: #FF9933;
+    --white: #FFFFFF;
+    --green: #138808;
+    --chakra-blue: #000080;
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --text-dark: #333;
+    --text-light: #f4f4f4;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    color: var(--text-dark);
+    overflow-x: hidden;
+}
+
+/* Glassmorphism Utility Class */
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    border-radius: 15px;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5%;
+    position: fixed;
+    width: 90%;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.85); /* Slightly more opaque for readability */
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--chakra-blue);
+}
+
+.logo span {
+    color: var(--saffron);
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    color: var(--green);
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(255,153,51,0.1) 0%, rgba(255,255,255,0) 50%, rgba(19,136,8,0.1) 100%);
+    padding-top: 80px;
+    position: relative;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, var(--saffron), var(--green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+/* Weather Widget */
+.weather-card {
+    padding: 2rem;
+    width: 300px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.weather-card h3 {
+    color: var(--chakra-blue);
+    margin-bottom: 1rem;
+}
+
+.temp-display {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.location {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Quotes Section */
+.quotes-section {
+    padding: 4rem 10%;
+    text-align: center;
+    background: #fff;
+}
+
+.quote-card {
+    background: #fff;
+    border-left: 5px solid var(--saffron);
+    padding: 2rem;
+    margin: 1rem auto;
+    max-width: 800px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border-radius: 0 10px 10px 0;
+    transition: transform 0.3s;
+}
+
+.quote-card:hover {
+    transform: translateY(-5px);
+}
+
+.quote-text {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #444;
+}
+
+.quote-author {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 700;
+    color: var(--green);
+}
+
+/* Market Prices */
+.market-prices {
+    padding: 4rem 10%;
+    background: #f9f9f9;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--chakra-blue);
+    font-size: 2rem;
+}
+
+.price-cards-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.price-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    width: 180px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-bottom: 4px solid var(--green);
+    transition: transform 0.3s;
+}
+
+.price-card:hover {
+    transform: scale(1.05);
+}
+
+.veg-icon {
+    font-size: 2rem;
+    color: var(--green);
+    margin-bottom: 0.5rem;
+}
+
+.price-tag {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+/* Sticky Toll-Free Button */
+.sticky-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    background: linear-gradient(45deg, var(--green), #2ecc71);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(19, 136, 8, 0.4);
+    z-index: 2000;
+    transition: transform 0.3s;
+}
+
+.sticky-btn:hover {
+    transform: translateY(-3px);
+}
+
+.icon-box {
+    font-size: 1.5rem;
+}
+
+.text-box span {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
+.text-box strong {
+    font-size: 1.1rem;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+.delay-1 {
+    animation-delay: 0.3s;
+}
