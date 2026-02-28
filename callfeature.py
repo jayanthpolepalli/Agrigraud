@@ -1,84 +1,90 @@
 import logging
-from fastapi import FastAPI, Response, Request, Form
+import httpx
+from fastapi import FastAPI, Response, Form, Query
 from twilio.twiml.voice_response import VoiceResponse, Gather
 
-# 1. Setup Logging to see the results in your terminal
+# Logging to see if requests hit your server
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-# CHANGE THIS to your current ngrok URL (no trailing slash)
-BASE_URL = "https://your-ngrok-id.ngrok-free.app"
+# FIXED COORDINATES FOR PANYAM
+PANYAM_LAT = 15.52
+PANYAM_LON = 78.35
 
 def twiml_response(vr: VoiceResponse):
-    return Response(content=str(vr), media_type="application/xml")
+    xml_content = str(vr)
+    print(f"\n[Outgoing TwiML]\n{xml_content}\n")
+    return Response(content=xml_content, media_type="application/xml")
 
-# --- STEP 1: NITROGEN (Keypad) ---
+# --- STEP 1: START & ASK LOCATION (Voice) ---
 @app.post("/voice")
-async def ask_n():
+async def ask_location():
+    logger.info(">>> TWILIO HIT: /voice")
     vr = VoiceResponse()
-    # Using 'dtmf' for keypad input
-    gather = Gather(input='dtmf', action=f'{BASE_URL}/process-n', timeout=5, num_digits=3)
-    gather.say("Welcome. Enter the Nitrogen value on your dial pad, then press hash.")
+    gather = Gather(input='speech dtmf', action='/process-location', timeout=5, finish_on_key='#')
+    gather.say("Welcome. Please speak your location name, then press hash.")
     vr.append(gather)
     return twiml_response(vr)
 
-# --- STEP 2: PHOSPHORUS (Keypad) ---
-@app.post("/process-n")
-async def process_n(Digits: str = Form(None)):
-    vr = VoiceResponse()
-    logger.info(f"Nitrogen received: {Digits}")
-    
-    gather = Gather(input='dtmf', action=f'{BASE_URL}/process-p', timeout=5, num_digits=3)
-    gather.say(f"Nitrogen {Digits} recorded. Now enter the Phosphorus value on your keypad.")
-    vr.append(gather)
-    return twiml_response(vr)
-
-# --- STEP 3: POTASSIUM (Keypad) ---
-@app.post("/process-p")
-async def process_p(Digits: str = Form(None)):
-    vr = VoiceResponse()
-    logger.info(f"Phosphorus received: {Digits}")
-    
-    gather = Gather(input='dtmf', action=f'{BASE_URL}/process-k', timeout=5, num_digits=3)
-    gather.say(f"Phosphorus {Digits} recorded. Please enter the Potassium value.")
-    vr.append(gather)
-    return twiml_response(vr)
-
-# --- STEP 4: pH (Keypad) ---
-@app.post("/process-k")
-async def process_k(Digits: str = Form(None)):
-    vr = VoiceResponse()
-    logger.info(f"Potassium received: {Digits}")
-    
-    gather = Gather(input='dtmf', action=f'{BASE_URL}/process-ph', timeout=5, num_digits=2)
-    gather.say(f"Potassium {Digits} recorded. Enter your two-digit p H value.")
-    vr.append(gather)
-    return twiml_response(vr)
-
-# --- STEP 5: LOCATION (Voice) ---
-@app.post("/process-ph")
-async def process_ph(Digits: str = Form(None)):
-    vr = VoiceResponse()
-    logger.info(f"pH received: {Digits}")
-    
-    # SWITCHING TO VOICE: input='speech'
-    gather = Gather(input='speech', action=f'{BASE_URL}/final-summary', timeout=4, speech_timeout='auto')
-    gather.say(f"p H {Digits} recorded. Finally, please speak the name of your city or location.")
-    vr.append(gather)
-    return twiml_response(vr)
-
-# --- STEP 6: FINAL SUMMARY ---
-@app.post("/final-summary")
-async def final_summary(SpeechResult: str = Form(None)):
-    vr = VoiceResponse()
+# --- STEP 2: PROCESS LOCATION -> NITROGEN ---
+@app.post("/process-location")
+async def process_location(SpeechResult: str = Form(None)):
     logger.info(f"Location Spoken: {SpeechResult}")
+    vr = VoiceResponse()
+    loc = SpeechResult if SpeechResult else "Panyam"
+    gather = Gather(input='dtmf', action=f'/process-n?loc={loc}', timeout=5, num_digits=3, finish_on_key='#')
+    gather.say(f"Recording data for {loc}. Enter Nitrogen value, then press hash.")
+    vr.append(gather)
+    return twiml_response(vr)
+
+# --- STEP 3: NITROGEN -> PHOSPHORUS ---
+@app.post("/process-n")
+async def process_n(loc: str, Digits: str = Form(None)):
+    vr = VoiceResponse()
+    gather = Gather(input='dtmf', action=f'/process-p?loc={loc}&n={Digits}', timeout=5, num_digits=3, finish_on_key='#')
+    gather.say(f"Nitrogen {Digits} recorded. Enter Phosphorus, then press hash.")
+    vr.append(gather)
+    return twiml_response(vr)
+
+# --- STEP 4: PHOSPHORUS -> POTASSIUM ---
+@app.post("/process-p")
+async def process_p(loc: str, n: str, Digits: str = Form(None)):
+    vr = VoiceResponse()
+    gather = Gather(input='dtmf', action=f'/process-k?loc={loc}&n={n}&p={Digits}', timeout=5, num_digits=3, finish_on_key='#')
+    gather.say(f"Phosphorus {Digits} recorded. Enter Potassium, then press hash.")
+    vr.append(gather)
+    return twiml_response(vr)
+
+# --- STEP 5: POTASSIUM -> pH ---
+@app.post("/process-k")
+async def process_k(loc: str, n: str, p: str, Digits: str = Form(None)):
+    vr = VoiceResponse()
+    gather = Gather(input='dtmf', action=f'/process-ph?loc={loc}&n={n}&p={p}&k={Digits}', timeout=5, num_digits=2, finish_on_key='#')
+    gather.say(f"Potassium {Digits} recorded. Enter two digit p H value, then press hash.")
+    vr.append(gather)
+    return twiml_response(vr)
+
+# --- STEP 6: FINAL RESULT (OpenMeteo + Model) ---
+@app.post("/process-ph")
+async def process_ph(loc: str, n: float, p: float, k: float, Digits: str = Form(None)):
+    ph = float(Digits) if Digits else 7.0
+    vr = VoiceResponse()
+    try:
+        weather_url = f"https://api.open-meteo.com/v1/forecast?latitude={PANYAM_LAT}&longitude={PANYAM_LON}&current_weather=true"
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(weather_url)
+            data = resp.json()
+            temp = data['current_weather']['temperature']
+
+        # Simple logic: If Ph is low, Rice. Else, Maize.
+        crop = "Rice" if ph < 7 else "Maize"
+
+        vr.say(f"our model recommends {crop}. Goodbye.")
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        vr.say("Error processing results. Goodbye.")
     
-    if SpeechResult:
-        vr.say(f"Thank you. Your location, {SpeechResult}, has been saved. Goodbye.")
-    else:
-        vr.say("I didn't catch the location, but your other values are saved. Goodbye.")
-        
     vr.hangup()
     return twiml_response(vr)
