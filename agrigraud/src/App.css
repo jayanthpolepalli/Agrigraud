@@ -1714,3 +1714,92 @@ body {
     padding: 20px;
   }
 }
+
+/* Helpline Box Styles */
+.helpline-box {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
+  padding: 16px 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(21, 128, 61, 0.35);
+  z-index: 999;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.helpline-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(21, 128, 61, 0.45);
+}
+
+.helpline-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.helpline-icon svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.helpline-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.helpline-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.helpline-number {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.helpline-number:hover {
+  text-decoration: underline;
+}
+
+/* Responsive for Helpline Box */
+@media (max-width: 480px) {
+  .helpline-box {
+    bottom: 20px;
+    left: 20px;
+    padding: 12px 18px;
+    border-radius: 12px;
+  }
+
+  .helpline-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .helpline-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .helpline-number {
+    font-size: 0.95rem;
+  }
+}

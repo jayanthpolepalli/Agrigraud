@@ -9,6 +9,7 @@ import CropPredictor from "./components/CropPredictor";
 import CropRecommendations from "./pages/CropRecommendations";
 import Marketplace from "./pages/Marketplace";
 import PesticidePage from "./pages/PesticidePage";
+import HelplineBox from "./components/HelplineBox";
 import languages from "./data/languages";
 import "./App.css";
 
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/recommendations" element={<CropPredictor content={content} />} />
         <Route path="/pesticide" element={<PesticidePage content={content} />} />
       </Routes>
+      <HelplineBox />
     </Router>
   );
 }
